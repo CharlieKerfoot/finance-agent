@@ -17,7 +17,7 @@ load_dotenv()
 INPUT_FILE = "dataset/finance_chunks.jsonl"
 OUTPUT_FILE = "dataset/train_data.jsonl"
 
-MAX_SAMPLES = 50
+# MAX_SAMPLES = 50
 
 client = OpenAI(api_key=os.getenv("API_KEY"))
 
@@ -29,7 +29,9 @@ Rules:
 1. The Question must be specific and require reasoning (not just keyword lookup).
 2. The Answer must be detailed and cite the logic from the text.
 3. If the text contains a Table (marked with | pipes), ask a question that requires comparing two numbers (e.g. "How much did revenue grow 2022 vs 2023?").
-4. Output JSON format: {"instruction": "The Question", "output": "The Answer"}
+4. 20% of the time, ask a question about a specific financial metric (e.g. "What was the exact inventory turnover?") that is plausibly related to the text but IS NOT actually present in the text.
+   - For these, the Answer must be: "The provided text does not contain information about [topic]. It discusses [what it actually discusses]."
+5. Output JSON format: {"instruction": "The Question", "output": "The Answer"}
 """
 
 def generate_qa(chunk_text, meta):
@@ -53,7 +55,7 @@ if __name__ == "__main__":
 
     chunks = [c for c in chunks if c['token_count'] > 200]
 
-    selected_chunks = chunks[:MAX_SAMPLES]
+    selected_chunks = chunks
 
     print(f"Generating synthetic data for {len(selected_chunks)} chunks...")
 

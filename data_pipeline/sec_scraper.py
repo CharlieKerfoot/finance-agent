@@ -1,6 +1,7 @@
 # /// script
 # dependencies = [
 #   "requests",
+#   "tqdm"
 # ]
 # ///
 
@@ -8,14 +9,35 @@ import requests
 import json
 import time 
 import os
+import random
+from tqdm.auto import tqdm
 
 headers = {
     "User-Agent": "FinanceAgentProject charliekerfoot@gmail.com"
 }
 
-TARGET_TICKERS = ["AAPL", "MSFT", "TSLA"]
+# QuantOxide Portfolio (Top ~50 by Weight + Sector Reps)
+TARGET_TICKERS = [
+    # Technology
+    "AAPL", "MSFT", "NVDA", "AVGO", "ORCL", "ADBE", "CRM", "AMD", "GOOGL",
+    # Media
+    "META", "NFLX", "DIS", "CMCSA",
+    # Financials
+    "JPM", "BAC", "V", "MA", "WFC", "MS", "GS", "BLK",
+    # Healthcare
+    "LLY", "UNH", "JNJ", "MRK", "ABBV", "TMO", "PFE",
+    # Consumer Retail
+    "AMZN", "WMT", "HD", "PG", "COST", "KO", "PEP", "MCD",
+    # Energy
+    "XOM", "CVX", "COP", "SLB",
+    # Industrials
+    "GE", "CAT", "UNP", "HON", "UPS", "BA",
+    # Misc
+    "LIN", "NEE", "PLD"
+]
 
 OUTPUT_DIR = "sec_raw_data"
+NUM_YEARS = 2
 
 def get_cik_map():
     """
@@ -33,7 +55,7 @@ def get_cik_map():
 
     return cik_map
 
-def get_latest_10k_metadata(cik):
+def get_10k_metadata(cik, count=NUM_YEARS):
     """
     Fetches the submission history for a specific CIK and finds the latest 10-K
     """
@@ -43,20 +65,27 @@ def get_latest_10k_metadata(cik):
 
     recent = data['filings']['recent']
 
+    filings = []
+    found = 0
+
     for i, form in enumerate(recent['form']):
         if form == '10-K':
             accession_number = recent['accessionNumber'][i]
             primary_document = recent['primaryDocument'][i]
             report_date = recent['reportDate'][i]
 
-            return {
+            filings.append({
                 "accession_number": accession_number,
                 "primary_document": primary_document,
-                "report_date": report_date
-            }
+                "report_date": report_date,
+                "year": report_date[:4]
+            })
 
-    print(f"No 10-K found for CIK {cik}")
-    return None
+            found += 1
+            if found == count:
+                break
+
+    return filings
 
 def download_10k(cik, metadata, ticker):
     """
@@ -66,10 +95,9 @@ def download_10k(cik, metadata, ticker):
     primary_document = metadata['primary_document']
 
     url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number}/{primary_document}"
-    print(url)
 
     response = requests.get(url, headers=headers)
-    
+
     filename = f"{OUTPUT_DIR}/{ticker}_10K_{metadata['report_date']}.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(response.text)
@@ -80,18 +108,22 @@ if __name__ == "__main__":
 
     cik_map = get_cik_map()
 
-    for ticker in TARGET_TICKERS:
+    for ticker in tqdm(TARGET_TICKERS):
         if ticker in cik_map:
             cik = cik_map[ticker]
-            print(f"\nProcessing {ticker} (CIK: {cik})...")
+            tqdm.write(f"Processing {ticker} (CIK: {cik})...")
 
-            metadata = get_latest_10k_metadata(cik)
+            filings = get_10k_metadata(cik, NUM_YEARS)
 
-            if metadata:
-                download_10k(cik, metadata, ticker)
+            if not filings:
+                print(f"No 10-Ks found for {ticker}")
 
-                time.sleep(0.2) # Rate limiting. SEC allows 10 requests/sec
+            for filing in filings:
+                download_10k(cik, filing, ticker)
+                time.sleep(0.1 + random.random() * 0.1) # Rate limiting. SEC allows 10 requests/sec
         else:
             print(f"Error: Could not find CIK for {ticker}")
+
+        time.sleep(0.1)
 
     print(f"Downloads done. Check the {OUTPUT_DIR} folder.")
