@@ -1,4 +1,4 @@
----Item 1A---
+--- Item 1A ---
 The following summarizes factors that could have a material adverse effect on the Company's business, reputation, results of operations, financial condition and stock price. The Company may not be able to accurately predict, control or mitigate these risks. Statements in this section are based on the Company's beliefs and opinions regarding matters that could materially adversely affect the Company in the future and are not representations as to whether such matters have or have not occurred previously. The risks and uncertainties described below are not exhaustive and should not be considered a complete statement of all potential risks or uncertainties that the Company faces or may face in the future.
 
 This section should be read in conjunction with Part II, Item 7, "Management's Discussion and Analysis of Financial Condition and Results of Operations" and the consolidated financial statements and accompanying notes in Part II, Item 8, "Financial Statements and Supplementary Data" of this Form 10-K.
@@ -248,7 +248,7 @@ The price of the Company's stock is subject to volatility.
 The Company's stock has experienced substantial price volatility in the past and may continue to do so in the future. Additionally, the Company, the technology industry and the stock market as a whole have, from time to time, experienced extreme stock price and volume fluctuations that have affected stock prices in ways that may have been unrelated to these companies' operating performance. Price volatility may cause the average price at which the Company repurchases its stock in a given period to exceed the stock's price at a given point in time. The Company believes the price of its stock should reflect expectations of future growth and profitability. The Company also believes the price of its stock should reflect expectations that its cash dividend will continue at current levels or grow, and that its current share repurchase program will be fully consummated. Future dividends are subject to declaration by the Company's Board of Directors ("Board"), and the Company's share repurchase program does not obligate it to acquire any specific number of shares. If the Company fails to meet expectations related to future growth, profitability, dividends, share repurchases or other market expectations, the price of the Company's stock may decline significantly, which could have a material adverse impact on investor confidence and employee retention.
 --------------------------------------------------
 
----Item 7---
+--- Item 7 ---
 of Financial Condition and Results of Operations
 
 The following discussion should be read in conjunction with the consolidated financial statements and accompanying notes included in Part II, Item 8 of this Form 10-K. This Item generally discusses 2025 and 2024 items and year-to-year comparisons between 2025 and 2024. Discussions of 2023 items and year-to-year comparisons between 2024 and 2023 are not included, and can be found in "Management's Discussion and Analysis of Financial Condition and Results of Operations" in Part II, Item 7 of the Company's Annual Report on Form 10-K for the fiscal year ended September 28, 2024.
@@ -566,7 +566,7 @@ Legal and Other Contingencies
 The Company is subject to various legal proceedings and claims that arise in the ordinary course of business, the outcomes of which are inherently uncertain. The Company records a liability when it is probable a loss has been incurred and the amount is reasonably estimable, the determination of which requires significant judgment. Resolution of legal matters in a manner inconsistent with management's expectations could have a material impact on the Company's financial condition and operating results.
 --------------------------------------------------
 
----Item 7A---
+--- Item 7A ---
 About Market Risk
 
 The Company is exposed to economic risk from interest rates and foreign exchange rates. The Company uses various strategies to manage these risks; however, they may still impact the Company's consolidated financial statements.

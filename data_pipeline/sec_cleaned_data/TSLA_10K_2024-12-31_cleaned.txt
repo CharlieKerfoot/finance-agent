@@ -1,4 +1,4 @@
----Item 1A---
+--- Item 1A ---
 You should carefully consider the risks described below together with the other information set forth in this report, which could materially affect our business, financial condition and future results. The risks described below are not the only risks facing our company. Risks and uncertainties not currently known to us or that we currently deem to be immaterial also may materially adversely affect our business, financial condition and operating results. 
 
 Risks Related to Our Ability to Grow Our Business
@@ -334,7 +334,7 @@ Anti-takeover provisions contained in our governing documents, applicable laws a
 Our certificate of formation and bylaws afford certain rights and powers to our board of directors that may facilitate the delay or prevention of an acquisition that it deems undesirable. We are also subject to Section 21.606 of the Texas Business Organizations Code and other provisions of Texas law that limit the ability of stockholders in certain situations to effect certain business combinations. In addition, a change in control may cause the acceleration of certain of our debt facilities. Any of the foregoing provisions and terms that has the effect of delaying or deterring a change in control could limit the opportunity for our stockholders to receive a premium for their shares of our common stock, and could also affect the price that some investors are willing to pay for our common stock.
 --------------------------------------------------
 
----Item 7---
+--- Item 7 ---
 OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS 
 
 The following discussion and analysis should be read in conjunction with the consolidated financial statements and the related notes included elsewhere in this Annual Report on Form 10-K. For further discussion of our products and services, technology and competitive strengths, refer to Item 1- Business. For discussion related to changes in financial condition and the results of operations for fiscal year 2023-related items, refer to Part II, Item 7. Management's Discussion and Analysis of Financial Condition and Results of Operations in our Annual Report on Form 10-K for fiscal year 2023, which was filed with the Securities and Exchange Commission on January 29, 2024.
@@ -726,7 +726,7 @@ Summary of Significant Accounting Policies
 43
 --------------------------------------------------
 
----Item 7A---
+--- Item 7A ---
 ABOUT MARKET RISK
 
 Foreign Currency Risk

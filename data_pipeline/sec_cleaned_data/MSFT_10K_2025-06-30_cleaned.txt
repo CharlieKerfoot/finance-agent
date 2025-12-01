@@ -1,4 +1,4 @@
----Item 1A---
+--- Item 1A ---
 Our operations and financial results are subject to various risks and uncertainties, including those described below, that could adversely affect our business, operations, financial condition, results of operations, liquidity, and the trading price of our common stock.
 
 STRATEGIC AND COMPETITIVE RISKS
@@ -438,7 +438,7 @@ PART I
 Item 1B, 1C
 --------------------------------------------------
 
----Item 7---
+--- Item 7 ---
 OF 
 
 FINANCIAL CONDITION AND RESULTS OF OPERATIONS
@@ -1287,7 +1287,7 @@ PART II
 Item 7A
 --------------------------------------------------
 
----Item 7A---
+--- Item 7A ---
 ABOUT MARKET RISK
 
 RISKS

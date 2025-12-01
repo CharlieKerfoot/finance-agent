@@ -162,7 +162,7 @@ def process_file(filename):
 
     with open(output_path, "w", encoding="utf-8") as f:
         for sec, text in extracted_data.items():
-            f.write(f"---{sec}---\n")
+            f.write(f"--- {sec} ---\n")
             f.write(text)
             f.write("\n" + "-"*50 + "\n\n")
 
