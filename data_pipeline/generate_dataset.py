@@ -40,7 +40,7 @@ def generate_qa(chunk_text, meta):
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": f"SOURCE ({meta['ticker']} {meta['section']}): \n\n{chunk_text}"}
+                {"role": "user", "content": f"SOURCE ({meta['ticker']} {meta['year']}): \n\n{chunk_text}"}
             ],
             response_format={"type":"json_object"}
         )
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     with open(INPUT_FILE, "r")as f:
         chunks = [json.loads(line) for line in f]
 
-    chunks = [c for c in chunks if c['token_count'] > 200]
+    chunks = [c for c in chunks if c['tokens'] > 200]
 
     selected_chunks = chunks
 
