@@ -1,2 +1,4 @@
 .env
 target/
+
+arbagent-q4.gguf
