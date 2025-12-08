@@ -19,7 +19,7 @@ OUTPUT_FILE = "dataset/train_data.jsonl"
 
 # MAX_SAMPLES = 50
 
-client = OpenAI(api_key=os.getenv("API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_KEY"))
 
 SYSTEM_PROMPT = """
 You are an expert financial analyst creating a training dataset for a junior analyst AI.

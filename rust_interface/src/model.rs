@@ -1,5 +1,5 @@
 use anyhow::{Error as E, Result};
-use candle_core::{DType, Device, Tensor, quantized::gguf_file};
+use candle_core::{Device, Tensor, quantized::gguf_file};
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::quantized_llama as model;
 use model::ModelWeights;
@@ -14,17 +14,14 @@ pub struct TextGeneration {
 
 impl TextGeneration {
     pub fn new(model_path: &str) -> Result<Self> {
-        #[cfg(feature = "metal")]
-        let device = Device::new_metal(0)?;
-        #[cfg(not(feature = "metal"))]
-        let device = Device::new_cuda(0).unwrap_or(Device::Cpu);
+        let device = Device::Cpu;
 
         let mut file = std::fs::File::open(model_path)?;
         let content = gguf_file::Content::read(&mut file)?;
         let model = ModelWeights::from_gguf(content, &mut file, &device)?;
 
         let api = hf_hub::api::sync::Api::new()?;
-        let repo = api.model("meta-llama/Meta-Llama-3-8B".to_string());
+        let repo = api.model("ckerf/arbagent-llama3-8b-lora".to_string());
         let tokenizer_path = repo.get("tokenizer.json")?;
         let tokenizer = Tokenizer::from_file(tokenizer_path).map_err(E::msg)?;
 

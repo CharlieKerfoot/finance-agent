@@ -1,4 +1,5 @@
-use axum::{Json, Router, extract::State, response::IntoResponse, routing::post};
+use axum::{Json, Router, extract::State, routing::post};
+use fastembed::{EmbeddingModel, InitOptions, TextEmbedding};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
@@ -7,39 +8,81 @@ use tokio::task;
 mod model;
 use model::TextGeneration;
 
+mod qdrant_client;
+use qdrant_client::QdrantDb;
+
 struct AppState {
     engine: Mutex<TextGeneration>,
+    embedder: Mutex<TextEmbedding>,
+    qdrant: QdrantDb,
 }
 
 #[derive(Deserialize)]
-struct InferenceRequest {
+struct RagRequest {
     query: String,
-    context: String,
 }
 
 #[derive(Serialize)]
-struct InferenceResponse {
+struct RagResponse {
     answer: String,
+    context_used: Vec<String>,
     reasoning_time: f64,
-    status: String,
 }
 
-async fn generate(
+async fn rag_inference(
     State(state): State<Arc<AppState>>,
-    Json(payload): Json<InferenceRequest>,
-) -> impl IntoResponse {
+    Json(payload): Json<RagRequest>,
+) -> Json<RagResponse> {
     let start_time = std::time::Instant::now();
+    println!("Processing RAG Request: {}", payload.query);
+
+    let embedding = {
+        let mut embedder = state.embedder.lock().unwrap();
+        match embedder.embed(vec![payload.query.clone()], None) {
+            Ok(vecs) => vecs[0].clone(),
+            Err(e) => {
+                return Json(RagResponse {
+                    answer: format!("Embedding Error: {}", e),
+                    context_used: vec![],
+                    reasoning_time: 0.0,
+                });
+            }
+        }
+    };
+
+    let search_results = match state.qdrant.search(embedding, 3).await {
+        Ok(results) => results,
+        Err(e) => {
+            return Json(RagResponse {
+                answer: format!("DB Error: {}", e),
+                context_used: vec![],
+                reasoning_time: 0.0,
+            });
+        }
+    };
+
+    let context_texts: Vec<String> = search_results
+        .into_iter()
+        .filter_map(|point| {
+            point
+                .payload
+                .get("text")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string())
+        })
+        .collect();
+
+    let context_blob = context_texts.join("\n\n---\n\n");
 
     let prompt = format!(
         "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{}\n\n### Input:\n{}\n\n### Response:\n",
-        payload.query, payload.context
+        payload.query, context_blob
     );
 
     let state_clone = state.clone();
-
     let prediction = task::spawn_blocking(move || {
         let mut engine = state_clone.engine.lock().unwrap();
-        engine.run(&prompt, 256)
+        engine.run(&prompt, 512) // Generate up to 512 tokens
     })
     .await
     .unwrap();
@@ -47,15 +90,15 @@ async fn generate(
     let duration = start_time.elapsed().as_secs_f64();
 
     match prediction {
-        Ok(answer) => Json(InferenceResponse {
+        Ok(answer) => Json(RagResponse {
             answer,
+            context_used: context_texts,
             reasoning_time: duration,
-            status: "success".to_string(),
         }),
-        Err(e) => Json(InferenceResponse {
-            answer: format!("Error: {}", e),
+        Err(e) => Json(RagResponse {
+            answer: format!("Inference Error: {}", e),
+            context_used: vec![],
             reasoning_time: duration,
-            status: "error".to_string(),
         }),
     }
 }
@@ -64,20 +107,30 @@ async fn generate(
 async fn main() {
     tracing_subscriber::fmt::init();
 
+    println!("Initializing Search Engine...");
+
     let model_path = "arbagent-q4.gguf";
-
-    println!("Initializing Inference Engine...");
-
     let engine = match TextGeneration::new(model_path) {
         Ok(e) => e,
         Err(e) => panic!("Failed to load model: {}", e),
     };
 
+    let mut embed_opts = InitOptions::default();
+    embed_opts.model_name = EmbeddingModel::BGEBaseENV15;
+    embed_opts.show_download_progress = true;
+    let embedder = TextEmbedding::try_new(embed_opts).expect("Failed to load Embedder");
+
+    let qdrant = QdrantDb::new_from_env().expect("Failed to connect to Qdrant");
+
+    let state = Arc::new(AppState {
+        engine: Mutex::new(engine),
+        embedder: Mutex::new(embedder),
+        qdrant,
+    });
+
     let app = Router::new()
-        .route("/generate", post(generate))
-        .with_state(Arc::new(AppState {
-            engine: Mutex::new(engine),
-        }));
+        .route("/rag", post(rag_inference))
+        .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Server listening on http://{}", addr);

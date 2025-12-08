@@ -1,4 +1,5 @@
 .env
 target/
+.fastembed_cache
 
 arbagent-q4.gguf
