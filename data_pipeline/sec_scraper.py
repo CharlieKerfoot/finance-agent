@@ -16,7 +16,7 @@ headers = {
     "User-Agent": "FinanceAgentProject charliekerfoot@gmail.com"
 }
 
-# QuantOxide Portfolio (Top ~50 by Weight + Sector Reps)
+# Arb-agent Portfolio (Top ~50 by Weight + Sector Reps)
 TARGET_TICKERS = [
     # Technology
     "AAPL", "MSFT", "NVDA", "AVGO", "ORCL", "ADBE", "CRM", "AMD", "GOOGL",

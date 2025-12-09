@@ -72,11 +72,19 @@ async fn rag_inference(
         })
         .collect();
 
-    let context_blob = context_texts.join("\n\n---\n\n");
+    let full_context = context_texts.join("\n\n---\n\n");
+
+    // Truncate at 8000 characters (for now)
+    let safe_context = if full_context.len() > 8000 {
+        let end = full_context[..8000].rfind('.').unwrap_or(12000);
+        &full_context[..end]
+    } else {
+        &full_context
+    };
 
     let prompt = format!(
         "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{}\n\n### Input:\n{}\n\n### Response:\n",
-        payload.query, context_blob
+        payload.query, safe_context
     );
 
     let state_clone = state.clone();

@@ -21,9 +21,9 @@ import time
 
 load_dotenv()
 
-RUST_ENDPOINT = "http://localhost:3000/rag"
+RUST_ENDPOINT = "http://127.0.0.1:3000/rag"
 OUTPUT_FILE = "benchmark_results.csv"
-SAMPLE_SIZE = 20 # Intital small sample (FinanceBench has 150)
+SAMPLE_SIZE = 1 # Intital small sample (FinanceBench has 150)
 
 client = OpenAI(api_key=os.getenv("OPENAI_KEY"))
 
@@ -71,10 +71,11 @@ def main():
     for row in tqdm(dataset):
         question = row['question']
         truth = row['answer']
+        data = 0
 
         try:
             start = time.time()
-            res = requests.post(RUST_ENDPOINT, json={"query": question}, timeout=60)
+            res = requests.post(RUST_ENDPOINT, json={"query": question})
             res.raise_for_status()
             data = res.json()
             prediction = data['answer']
@@ -82,7 +83,7 @@ def main():
         except Exception as e:
             prediction = f"Error: {e}"
             latency = 0
-            continue
+            print(prediction)
 
         grade = grade_answer(question, truth, prediction)
 
@@ -93,13 +94,18 @@ def main():
             "score": grade['score'],
             "reason": grade['reason'],
             "latency": latency,
-            "context_used": len(data.get('context_used', [])) if 'data' in locals() else 0
+            "context_used": len(data.get('context_used', [])) if data != 0 else 0
         })
 
     df = pd.DataFrame(results)
+
+    if df.empty:
+        print("No results collected — all queries failed.")
+        return
+
     accuracy = df['score'].mean() * 100
     avg_latency = df['latency'].mean()
-    
+
     print("\n" + "-"*40)
     print(f"FINAL SCORECARD")
     print("-"*40)

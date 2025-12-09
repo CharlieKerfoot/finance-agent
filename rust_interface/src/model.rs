@@ -25,7 +25,7 @@ impl TextGeneration {
         let tokenizer_path = repo.get("tokenizer.json")?;
         let tokenizer = Tokenizer::from_file(tokenizer_path).map_err(E::msg)?;
 
-        let logits_processor = LogitsProcessor::new(299792458, Some(0.7), Some(0.9));
+        let logits_processor = LogitsProcessor::new(24, Some(0.7), Some(0.9));
 
         Ok(Self {
             model,
