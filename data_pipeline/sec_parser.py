@@ -117,12 +117,13 @@ def create_chunks(text, meta):
 
         if current_tokens + count > CHUNK_SIZE and current_chunk:
             chunk_text = "\n\n".join(current_chunk)
-            if score_chunk(chunk_text) >= 2: # Hyperparamter threshold: (greater = stricter)
+            chunk_score = score_chunk(chunk_text)
+            if chunk_score >= 2:
                 chunks.append({
                     "text": chunk_text,
                     "meta": meta,
                     "tokens": current_tokens,
-                    "score": score_chunk(chunk_text)
+                    "score": chunk_score,
                 })
 
             current_chunk = current_chunk[-3:] # Keep last 3 paragraphs as context

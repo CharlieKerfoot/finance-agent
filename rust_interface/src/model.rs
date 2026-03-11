@@ -12,9 +12,27 @@ pub struct TextGeneration {
     device: Device,
 }
 
+pub fn get_device() -> Result<Device> {
+    #[cfg(feature = "cuda")]
+    {
+        return Device::new_cuda(0);
+    }
+
+    #[cfg(feature = "metal")]
+    {
+        return Device::new_metal(0);
+    }
+
+    #[cfg(not(any(feature = "cuda", feature = "metal")))]
+    {
+        println!("Running on CPU (No GPU features enabled)");
+        return Ok(Device::Cpu);
+    }
+}
+
 impl TextGeneration {
     pub fn new(model_path: &str) -> Result<Self> {
-        let device = Device::Cpu;
+        let device = get_device()?;
 
         let mut file = std::fs::File::open(model_path)?;
         let content = gguf_file::Content::read(&mut file)?;

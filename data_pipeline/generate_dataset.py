@@ -50,7 +50,7 @@ def generate_qa(chunk_text, meta):
         return None
 
 if __name__ == "__main__":
-    with open(INPUT_FILE, "r")as f:
+    with open(INPUT_FILE, "r") as f:
         chunks = [json.loads(line) for line in f]
 
     chunks = [c for c in chunks if c['tokens'] > 200]

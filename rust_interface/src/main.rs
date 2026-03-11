@@ -74,9 +74,8 @@ async fn rag_inference(
 
     let full_context = context_texts.join("\n\n---\n\n");
 
-    // Truncate at 8000 characters (for now)
     let safe_context = if full_context.len() > 8000 {
-        let end = full_context[..8000].rfind('.').unwrap_or(12000);
+        let end = full_context[..8000].rfind('.').unwrap_or(8000);
         &full_context[..end]
     } else {
         &full_context

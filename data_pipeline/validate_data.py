@@ -8,6 +8,7 @@
 # ///
 
 import json
+import os
 import pandas as pd
 import tiktoken
 import matplotlib.pyplot as plt
@@ -52,5 +53,4 @@ def analyze_dataset():
     plt.show()
 
 if __name__ == "__main__":
-    import os
     analyze_dataset()

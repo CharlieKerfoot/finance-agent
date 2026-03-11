@@ -1,5 +1,15 @@
 .env
 target/
 .fastembed_cache
-
-arbagent-q4.gguf
+*.gguf
+__pycache__/
+*.pyc
+.venv/
+outputs/
+wandb/
+dataset/
+sec_raw_data/
+arbagent_merged_16bit/
+llama.cpp/
+benchmark_results.csv
+.uv/

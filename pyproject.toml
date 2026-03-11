@@ -1,0 +1,30 @@
+[project]
+name = "finance-agent"
+version = "0.1.0"
+description = "Financial RAG agent fine-tuned on SEC 10-K filings"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.1",
+    "transformers",
+    "datasets",
+    "trl",
+    "peft",
+    "accelerate",
+    "bitsandbytes",
+    "unsloth[cu121-torch250] @ git+https://github.com/unslothai/unsloth.git",
+    "wandb",
+    "requests",
+    "openai",
+    "tqdm",
+    "pandas",
+    "python-dotenv",
+    "qdrant-client",
+    "sentence-transformers",
+    "beautifulsoup4",
+    "lxml",
+    "tiktoken",
+    "matplotlib",
+]
+
+[project.scripts]
+train = "train:main"

@@ -23,7 +23,7 @@ load_dotenv()
 
 RUST_ENDPOINT = "http://127.0.0.1:3000/rag"
 OUTPUT_FILE = "benchmark_results.csv"
-SAMPLE_SIZE = 1 # Intital small sample (FinanceBench has 150)
+SAMPLE_SIZE = 150
 
 client = OpenAI(api_key=os.getenv("OPENAI_KEY"))
 
@@ -57,7 +57,7 @@ def grade_answer(question, truth, prediction):
         )
         import json
         return json.loads(response.choices[0].message.content)
-    except:
+    except Exception:
         return {"score": 0, "reason": "Grading Error"}
 
 def main():
@@ -71,7 +71,7 @@ def main():
     for row in tqdm(dataset):
         question = row['question']
         truth = row['answer']
-        data = 0
+        data = {}
 
         try:
             start = time.time()
@@ -94,7 +94,7 @@ def main():
             "score": grade['score'],
             "reason": grade['reason'],
             "latency": latency,
-            "context_used": len(data.get('context_used', [])) if data != 0 else 0
+            "context_used": len(data.get('context_used', []))
         })
 
     df = pd.DataFrame(results)
